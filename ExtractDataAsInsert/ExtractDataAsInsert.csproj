@@ -42,6 +42,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PlaceholderOptions\DateTimeOption.cs" />
+    <Compile Include="PlaceholderOptions\DateTimeRelativeOption.cs" />
+    <Compile Include="PlaceholderOptions\DateTimeRelativeUtcOption.cs" />
+    <Compile Include="PlaceholderOptions\IPlaceholderOption.cs" />
     <Compile Include="SqlDataReader.cs" />
     <Compile Include="Placeholder.cs" />
     <Compile Include="Program.cs" />

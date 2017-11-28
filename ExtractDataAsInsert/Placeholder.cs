@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
+
+using ExtractDataAsInsert.PlaceholderOptions;
 
 namespace ExtractDataAsInsert
 {
@@ -8,11 +11,8 @@ namespace ExtractDataAsInsert
     {
         private const string OptionsDelimiter = ":";
 
-        private const string DateTimeOption = "DATETIME";
-
-        private const string DateTimeRelativeOption = "RELATIVEDATETIME";
-
-        private const string DateTimeRelativeUtcOption = "RELATIVEDATETIMEUTC";
+        private static readonly IPlaceholderOption[] validOptions =
+            { new DateTimeOption(), new DateTimeRelativeOption(), new DateTimeRelativeUtcOption() };
 
         public Placeholder(string placeHolderStringWithBrackets)
         {
@@ -33,17 +33,24 @@ namespace ExtractDataAsInsert
             }
         }
 
+        public Placeholder(string identifier, IPlaceholderOption option)
+        {
+            this.ValueIdentifier = identifier;
+            this.ExactPlaceHolderWithBrackets = $"{{{identifier}{OptionsDelimiter}{option.GetIdentifier()}}}";
+            this.Options = new List<IPlaceholderOption>() { option };
+        }
+
         public string ExactPlaceHolderWithBrackets { get; private set; }
 
         public string ValueIdentifier { get; private set; }
 
-        public IList<string> Options { get; private set; }
+        public IList<IPlaceholderOption> Options { get; private set; }
 
-        public bool IsDateTime => this.Options.Contains(DateTimeOption);
+        public bool IsDateTime => this.Options.Any(option => option is DateTimeOption);
 
-        public bool IsRelativeDateTime => this.Options.Contains(DateTimeRelativeOption);
+        public bool IsRelativeDateTime => this.Options.Any(option => option is DateTimeRelativeOption);
 
-        public bool IsRelativeDateTimeUtc => this.Options.Contains(DateTimeRelativeUtcOption);
+        public bool IsRelativeDateTimeUtc => this.Options.Any(option => option is DateTimeRelativeUtcOption);
 
         private static string RemoveBrackets(string placeholderWithBrackets)
         {
@@ -66,7 +73,16 @@ namespace ExtractDataAsInsert
             return placeholderWithBrackets.Replace("{", string.Empty).Replace("}", string.Empty);
         }
 
-        private static IList<string> GetOptions(string placeholder)
+        private static IList<IPlaceholderOption> GetOptions(string placeholder)
+        {
+            return GetOptionStrings(placeholder).Select(
+                (optionString) =>
+                    {
+                        return validOptions.Single(validOption => validOption.GetIdentifier().Equals(optionString));
+                    }).ToList();
+        }
+
+        private static IList<string> GetOptionStrings(string placeholder)
         {
             var optionsRegex = new Regex($"{OptionsDelimiter}[^{OptionsDelimiter}]+");
             var options = new List<string>();

@@ -37,5 +37,7 @@ namespace ExtractDataAsInsert.StatementBuilder
         public abstract string TableIdentifier();
 
         public abstract string GetCondition();
+
+        public virtual string Identifier() => this.TableIdentifier();
     }
 }

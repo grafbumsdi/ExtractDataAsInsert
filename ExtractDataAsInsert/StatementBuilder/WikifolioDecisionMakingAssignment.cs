@@ -1,5 +1,7 @@
 ﻿using System;
 
+using ExtractDataAsInsert.PlaceholderOptions;
+
 namespace ExtractDataAsInsert.StatementBuilder
 {
     public class WikifolioDecisionMakingAssignment : DefaultStatementBuilder, IStatementBuilder
@@ -8,7 +10,7 @@ namespace ExtractDataAsInsert.StatementBuilder
             {
                 new Placeholder("{Wikifolio}"),
                 new Placeholder("{DecisionMaking}"),
-                new Placeholder("{CreationDate:RELATIVEDATETIME}")
+                new Placeholder("CreationDate", new DateTimeRelativeOption())
             };
 
         private readonly Guid wikifolioGuid;

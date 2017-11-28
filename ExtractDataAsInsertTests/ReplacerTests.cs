@@ -36,11 +36,18 @@ namespace ExtractDataAsInsertTests
         [TestMethod()]
         public void GetPlaceholdersMultipleMatches()
         {
-            var replacer = new Replacer(DefaultDictionary, "INSERT INTO Wikifolio () VALUES ({gaxi:123},{haxi:43},{gaxi},{delay},{gaxi})");
+            var replacer = new Replacer(DefaultDictionary, "INSERT INTO Wikifolio () VALUES ({gaxi},{haxi},{gaxi},{delay},{gaxi})");
             var placeHolders = replacer.GetPlaceholders();
             Assert.AreEqual(5, placeHolders.Count);
-            Assert.AreEqual("{haxi:43}", placeHolders[1].ExactPlaceHolderWithBrackets);
+            Assert.AreEqual("{haxi}", placeHolders[1].ExactPlaceHolderWithBrackets);
             Assert.AreEqual("{gaxi}", placeHolders[4].ExactPlaceHolderWithBrackets);
+        }
+
+        [TestMethod()]
+        public void GetPlaceholdersMultipleMatchesWithInvalidOptions()
+        {
+            var replacer = new Replacer(DefaultDictionary, "INSERT INTO Wikifolio () VALUES ({gaxi:123},{haxi:43},{gaxi},{delay},{gaxi})");
+            Assert.ThrowsException<InvalidOperationException>(() => replacer.GetPlaceholders());
         }
 
 

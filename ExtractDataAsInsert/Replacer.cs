@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace ExtractDataAsInsert
@@ -35,17 +36,9 @@ namespace ExtractDataAsInsert
             {
                 rawValue = null;
             }
-            if (placeholder.IsDateTime)
+            if (placeholder.Options.Count > 0)
             {
-                rawValue = (rawValue != null) ? ConvertDateToFuckingMsSqlDateTimeFormat((DateTime)rawValue) : null;
-            }
-            if (placeholder.IsRelativeDateTime)
-            {
-                return (rawValue != null) ? ConvertToRelativeDateTime((DateTime)rawValue) : "NULL";
-            }
-            if (placeholder.IsRelativeDateTimeUtc)
-            {
-                return (rawValue != null) ? ConvertToRelativeDateTimeUtc((DateTime)rawValue) : "NULL";
+                return placeholder.Options.FirstOrDefault()?.RawValueToStringValue(rawValue);
             }
             if (rawValue == null)
             {
@@ -67,31 +60,6 @@ namespace ExtractDataAsInsert
                 placeHolders.Add(new Placeholder(match.Value));
             }
             return placeHolders;
-        }
-
-        private static string ConvertDateToFuckingMsSqlDateTimeFormat(DateTime time)
-        {
-            // all of this fucking stuff not working
-            // return time.ToString("yyyy-MM-dd HH:mm:ss");
-            // return time.ToString("O");
-            // return time.ToString("u");
-            return time.Year + time.Month.ToString("D2") + time.Day.ToString("D2") + " " + time.Hour.ToString("D2")
-                   + ":" + time.Minute.ToString("D2") + ":" + time.Second.ToString("D2") + "."
-                   + time.Millisecond.ToString("D3");
-        }
-
-        private static string ConvertToRelativeDateTime(DateTime time)
-        {
-            var diff = DateTime.Now.Date - time.Date;
-            return
-                $"DATEADD(MILLISECOND, {time.TimeOfDay.TotalMilliseconds}, DATEADD(DAY, DATEDIFF(DAY, {diff.TotalDays}, GETDATE()), 0))";
-        }
-
-        private static string ConvertToRelativeDateTimeUtc(DateTime timeInUtc)
-        {
-            var diff = DateTime.UtcNow.Date - timeInUtc.Date;
-            return
-                $"DATEADD(MILLISECOND, {timeInUtc.TimeOfDay.TotalMilliseconds}, DATEADD(DAY, DATEDIFF(DAY, {diff.TotalDays}, GETUTCDATE()), 0))";
         }
     }
 }

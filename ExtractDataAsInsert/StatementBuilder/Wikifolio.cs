@@ -158,10 +158,7 @@ namespace ExtractDataAsInsert.StatementBuilder
             throw new NotImplementedException();
         }
 
-        public override string TableIdentifier()
-        {
-            throw new NotImplementedException();
-        }
+        public override string TableIdentifier() => "Wikifolio";
 
         public override string GetCondition()
         {

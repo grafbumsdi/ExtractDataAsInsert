@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 using ExtractDataAsInsert.StatementBuilder;
@@ -28,22 +29,26 @@ namespace ExtractDataAsInsert
 
         public void WriteInserts(TextWriter writer)
         {
-            this.WriteWikifolioInserts(writer);
-            writer.WriteLine(string.Empty);
-            this.WriteUrlInserts(writer);
-            writer.WriteLine(string.Empty);
+            var statementBuilders = new List<IStatementBuilder>()
+                                        {
+                                            new StatementBuilder.Wikifolio(
+                                                this.wikifolioGuid,
+                                                this.userGuid),
+                                            new StatementBuilder.Url(this.wikifolioGuid),
+                                            new StatementBuilder.WikifolioDecisionMakingAssignment(this.wikifolioGuid)
+                                        };
+
+            foreach (var statementBuilder in statementBuilders)
+            {
+                this.WriteInsertsWithStatementBuilder(writer, statementBuilder);
+            }
         }
 
-        private void WriteWikifolioInserts(TextWriter writer)
+        private void WriteInsertsWithStatementBuilder(TextWriter writer, IStatementBuilder statementBuilder)
         {
-            var wikifolioStatementBuilder = new StatementBuilder.Wikifolio(this.wikifolioGuid, this.userGuid);
-            this.ReadAndReplace(writer, wikifolioStatementBuilder);
-        }
-
-        private void WriteUrlInserts(TextWriter writer)
-        {
-            var urlStatementBuilder = new StatementBuilder.Url(this.wikifolioGuid);
-            this.ReadAndReplace(writer, urlStatementBuilder);
+            writer.WriteLine($"-- INSERTS FOR: {statementBuilder.Identifier()}");
+            this.ReadAndReplace(writer, statementBuilder);
+            writer.WriteLine(string.Empty);
         }
 
         private void ReadAndReplace(TextWriter writer, IStatementBuilder statementBuilder)
