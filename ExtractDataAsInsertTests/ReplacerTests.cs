@@ -3,29 +3,31 @@ using System.Collections.Generic;
 
 using ExtractDataAsInsert;
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace ExtractDataAsInsertTests
 {
-    [TestClass()]
+    [TestFixture]
     public class ReplacerTests
     {
-        private static readonly DateTime TestDateTime = new DateTime(2017, 11, 1, 14, 13, 02).AddMilliseconds(89);
-
         private const string FreeText = "free text ' :option DateTIME anything { $%&$} wer";
         private const string FreeTextPreparedForInsert = "free text '' :option DateTIME anything { $%&$} wer";
+
+        private static readonly DateTime TestDateTime = new DateTime(2017, 11, 1, 14, 13, 02).AddMilliseconds(89);
 
         private static readonly Dictionary<string, object> DefaultDictionary =
             new Dictionary<string, object>() { { "gaxi", null }, { "dateNull", null }, { "date", TestDateTime }, { "freeText", FreeText } };
 
-        [TestMethod()]
+        private int DiffToTestTimeInDays => (int)(DateTime.Now.Date - TestDateTime.Date).TotalDays;
+
+        [Test]
         public void GetPlaceholdersNoMatches()
         {
             var replacer = new Replacer(DefaultDictionary, "INSERT INTO Wikifolio () VALUES ()");
             Assert.AreEqual(0, replacer.GetPlaceholders().Count);
         }
 
-        [TestMethod()]
+        [Test]
         public void GetPlaceholdersOneMatch()
         {
             var replacer = new Replacer(DefaultDictionary, "INSERT INTO Wikifolio () VALUES ({gaxi})");
@@ -34,7 +36,7 @@ namespace ExtractDataAsInsertTests
             Assert.AreEqual("{gaxi}", placeHolders[0].ExactPlaceHolderWithBrackets);
         }
 
-        [TestMethod()]
+        [Test]
         public void GetPlaceholdersMultipleMatches()
         {
             var replacer = new Replacer(DefaultDictionary, "INSERT INTO Wikifolio () VALUES ({gaxi},{haxi},{gaxi},{delay},{gaxi})");
@@ -44,50 +46,49 @@ namespace ExtractDataAsInsertTests
             Assert.AreEqual("{gaxi}", placeHolders[4].ExactPlaceHolderWithBrackets);
         }
 
-        [TestMethod()]
+        [Test]
         public void GetPlaceholdersMultipleMatchesWithInvalidOptions()
         {
             var replacer = new Replacer(DefaultDictionary, "INSERT INTO Wikifolio () VALUES ({gaxi:123},{haxi:43},{gaxi},{delay},{gaxi})");
-            Assert.ThrowsException<InvalidOperationException>(() => replacer.GetPlaceholders());
+            Assert.Throws<InvalidOperationException>(() => replacer.GetPlaceholders());
         }
 
-
-        [TestMethod()]
+        [Test]
         public void GetFinalOutputOneMatch()
         {
             var replacer = new Replacer(DefaultDictionary, "FreeText: {freeText}");
             Assert.AreEqual($"FreeText: '{FreeTextPreparedForInsert}'", replacer.GetFinalOutput());
         }
 
-        [TestMethod()]
+        [Test]
         public void GetFinalOutputOneNullMatch()
         {
             var replacer = new Replacer(DefaultDictionary, "INSERT INTO Wikifolio () VALUES ({gaxi})");
             Assert.AreEqual("INSERT INTO Wikifolio () VALUES (NULL)", replacer.GetFinalOutput());
         }
 
-        [TestMethod()]
+        [Test]
         public void GetFinalOutputMultipleMatches()
         {
             var replacer = new Replacer(DefaultDictionary, "INSERT INTO Wikifolio () VALUES ({gaxi}, {gaxi})");
             Assert.AreEqual("INSERT INTO Wikifolio () VALUES (NULL, NULL)", replacer.GetFinalOutput());
         }
 
-        [TestMethod()]
+        [Test]
         public void GetFinalOutputDateMatches()
         {
             var replacer = new Replacer(DefaultDictionary, "haha: {date}");
             Assert.AreEqual("haha: '01.11.2017 14:13:02'", replacer.GetFinalOutput());
         }
 
-        [TestMethod()]
+        [Test]
         public void GetFinalOutputDateMatchesDateTime()
         {
             var replacer = new Replacer(DefaultDictionary, "SELECT {date:DATETIME}");
             Assert.AreEqual("SELECT '20171101 14:13:02.089'", replacer.GetFinalOutput());
         }
 
-        [TestMethod()]
+        [Test]
         public void GetFinalOutputDateMatchesRelativeDateTime()
         {
             var replacer = new Replacer(DefaultDictionary, "SELECT {date:RELATIVEDATETIME}");
@@ -96,7 +97,7 @@ namespace ExtractDataAsInsertTests
                 replacer.GetFinalOutput());
         }
 
-        [TestMethod()]
+        [Test]
         public void GetFinalOutputDateMatchesRelativeDateTimeUtc()
         {
             var replacer = new Replacer(DefaultDictionary, "SELECT {date:RELATIVEDATETIMEUTC}");
@@ -104,7 +105,5 @@ namespace ExtractDataAsInsertTests
                 $"SELECT DATEADD(MILLISECOND, 51182089, DATEADD(DAY, DATEDIFF(DAY, {this.DiffToTestTimeInDays}, GETUTCDATE()), 0))",
                 replacer.GetFinalOutput());
         }
-
-        private int DiffToTestTimeInDays => (int)(DateTime.Now.Date - TestDateTime.Date).TotalDays;
     }
 }

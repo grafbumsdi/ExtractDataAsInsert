@@ -1,0 +1,6 @@
+group Internal
+
+group External
+    NLog
+    NUnit
+    StyleCop.Analyzers

@@ -1,22 +1,23 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using System;
+
+using NUnit.Framework;
 
 namespace ExtractDataAsInsertTests.StatementBuilder
 {
-    [TestClass()]
+    [TestFixture]
     public class WikifolioDecisionMakingAssignmentTests
     {
-        [TestMethod()]
+        [Test]
         public void InsertStatementTest()
         {
-            var wikifolioGuid = new Guid();
+            var wikifolioGuid = default(Guid);
             var wdmaStatementBuilder = new ExtractDataAsInsert.StatementBuilder.WikifolioDecisionMakingAssignment(wikifolioGuid);
             Assert.AreEqual(
                 "INSERT INTO [WikifolioDecisionMakingAssignment]([Wikifolio],[DecisionMaking],[CreationDate])VALUES({Wikifolio},{DecisionMaking},{CreationDate:RELATIVEDATETIME})",
                 wdmaStatementBuilder.InsertStatement());
         }
 
-        [TestMethod()]
+        [Test]
         public void QueryStatementTest()
         {
             var wikifolioGuid = new Guid("C03CD005-2A25-4A10-A127-903D2135DFB1");

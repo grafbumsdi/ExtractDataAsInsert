@@ -1,0 +1,8 @@
+group Internal
+    source http://192.168.11.3:8087/nuget/Libraries
+
+group External
+    source https://www.nuget.org/api/v2/
+    nuget NLog
+    nuget NUnit
+    nuget StyleCop.Analyzers

@@ -3,14 +3,14 @@
 using ExtractDataAsInsert;
 using ExtractDataAsInsert.PlaceholderOptions;
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace ExtractDataAsInsertTests
 {
-    [TestClass()]
+    [TestFixture]
     public class PlaceholderTests
     {
-        [TestMethod()]
+        [Test]
         public void PlaceholderThreeOptions()
         {
             var placeHolder = new Placeholder("{gaxi:DATETIME:RELATIVEDATETIME:RELATIVEDATETIMEUTC}");
@@ -24,14 +24,13 @@ namespace ExtractDataAsInsertTests
             Assert.IsTrue(placeHolder.IsRelativeDateTimeUtc);
         }
 
-        [TestMethod()]
+        [Test]
         public void PlaceholderInvalidOptions()
         {
-            Assert.ThrowsException<InvalidOperationException>(
-                () => new Placeholder("{gaxi:OPTION1:OPTION2:ODATETIME}"));
+            Assert.Throws<InvalidOperationException>(() => new Placeholder("{gaxi:OPTION1:OPTION2:ODATETIME}"));
         }
 
-        [TestMethod()]
+        [Test]
         public void PlaceholderOneOptions()
         {
             var placeHolder = new Placeholder("{gaxi:DATETIME}");
@@ -41,7 +40,7 @@ namespace ExtractDataAsInsertTests
             Assert.IsTrue(placeHolder.IsDateTime);
         }
 
-        [TestMethod()]
+        [Test]
         public void PlaceholderNoOptions()
         {
             var placeHolder = new Placeholder("{gaxiDATETIMEOPTION1OPTION2}");
@@ -50,7 +49,7 @@ namespace ExtractDataAsInsertTests
             Assert.IsFalse(placeHolder.IsDateTime);
         }
 
-        [TestMethod()]
+        [Test]
         public void PlaceholderOptionsRelativeDateTimeUtc()
         {
             var placeHolder = new Placeholder("{gaxiDATETIMEOPTION1OPTION2:RELATIVEDATETIMEUTC}");
@@ -61,7 +60,7 @@ namespace ExtractDataAsInsertTests
             Assert.IsTrue(placeHolder.IsRelativeDateTimeUtc);
         }
 
-        [TestMethod()]
+        [Test]
         public void PlaceholderConstructorWithOption()
         {
             var placeHolder = new Placeholder("Identifier", new DateTimeOption());

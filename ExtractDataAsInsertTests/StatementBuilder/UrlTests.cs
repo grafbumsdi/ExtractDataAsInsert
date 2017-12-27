@@ -1,25 +1,23 @@
 ﻿using System;
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-using ExtractDataAsInsert.StatementBuilder;
+using NUnit.Framework;
 
 namespace ExtractDataAsInsertTests.StatementBuilder
 {
-    [TestClass()]
+    [TestFixture]
     public class UrlTests
     {
-        [TestMethod()]
+        [Test]
         public void InsertStatementTest()
         {
-            var wikifolioGuid = new Guid();
+            var wikifolioGuid = default(Guid);
             var urlStatementBuilder = new ExtractDataAsInsert.StatementBuilder.Url(wikifolioGuid);
             Assert.AreEqual(
                 "INSERT INTO [Url]([ID],[Wikifolio],[Url],[Count],[IdentifierType])VALUES({ID},{Wikifolio},{Url},{Count},{IdentifierType})",
                 urlStatementBuilder.InsertStatement());
         }
 
-        [TestMethod()]
+        [Test]
         public void QueryStatementTest()
         {
             var wikifolioGuid = new Guid("C03CD005-2A25-4A10-A127-903D2135DFB1");
