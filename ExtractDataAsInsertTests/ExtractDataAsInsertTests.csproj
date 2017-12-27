@@ -62,7 +62,6 @@
     <Compile Include="ReplacerTests.cs" />
     <Compile Include="StatementBuilder\UrlTests.cs" />
     <Compile Include="StatementBuilder\WikifolioDecisionMakingAssignmentTests.cs" />
-    <Compile Include="WikifolioExtractorTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -48,6 +48,10 @@ namespace ExtractDataAsInsert
             {
                 rawValue = ((decimal)rawValue).ToString(CultureInfo.InvariantCulture);
             }
+            if (rawValue is string)
+            {
+                rawValue = ((string)rawValue).Replace("'", "''");
+            }
             return $"'{rawValue.ToString()}'";
         }
 

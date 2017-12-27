@@ -12,7 +12,8 @@ namespace ExtractDataAsInsertTests
     {
         private static readonly DateTime TestDateTime = new DateTime(2017, 11, 1, 14, 13, 02).AddMilliseconds(89);
 
-        private const string FreeText = "free text :option DateTIME anything { $%&$} wer";
+        private const string FreeText = "free text ' :option DateTIME anything { $%&$} wer";
+        private const string FreeTextPreparedForInsert = "free text '' :option DateTIME anything { $%&$} wer";
 
         private static readonly Dictionary<string, object> DefaultDictionary =
             new Dictionary<string, object>() { { "gaxi", null }, { "dateNull", null }, { "date", TestDateTime }, { "freeText", FreeText } };
@@ -55,7 +56,7 @@ namespace ExtractDataAsInsertTests
         public void GetFinalOutputOneMatch()
         {
             var replacer = new Replacer(DefaultDictionary, "FreeText: {freeText}");
-            Assert.AreEqual($"FreeText: '{FreeText}'", replacer.GetFinalOutput());
+            Assert.AreEqual($"FreeText: '{FreeTextPreparedForInsert}'", replacer.GetFinalOutput());
         }
 
         [TestMethod()]

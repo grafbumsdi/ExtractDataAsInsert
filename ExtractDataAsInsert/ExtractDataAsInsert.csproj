@@ -51,11 +51,21 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Replacer.cs" />
+    <Compile Include="StatementBuilder\WikifolioCashAccountTransaction.cs" />
+    <Compile Include="StatementBuilder\WikifolioCountryLicence.cs" />
     <Compile Include="StatementBuilder\WikifolioDecisionMakingAssignment.cs" />
     <Compile Include="StatementBuilder\IStatementBuilder.cs" />
     <Compile Include="StatementBuilder\DefaultStatementBuilder.cs" />
     <Compile Include="StatementBuilder\Url.cs" />
     <Compile Include="StatementBuilder\Wikifolio.cs" />
+    <Compile Include="StatementBuilder\WikifolioDescription.cs" />
+    <Compile Include="StatementBuilder\WikifolioFee.cs" />
+    <Compile Include="StatementBuilder\WikifolioInvestmentUniverseAssignment.cs" />
+    <Compile Include="StatementBuilder\WikifolioMessage.cs" />
+    <Compile Include="StatementBuilder\WikifolioRankingValues.cs" />
+    <Compile Include="StatementBuilder\WikifolioStatusHistory.cs" />
+    <Compile Include="StatementBuilder\WikifolioTagAssignment.cs" />
+    <Compile Include="StatementBuilder\WikifolioTickDataAggregated.cs" />
     <Compile Include="WikifolioExtractor.cs" />
   </ItemGroup>
   <ItemGroup>
